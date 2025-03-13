@@ -14,7 +14,7 @@ public class DoubleLinkedList {
     
     
     //Menambahkan node di awal list
-    public void addFirst(String data){
+    public void addFirst(String data){  
         Node newNode = new Node(data);
         if (head == null){
             head = tail = newNode;
