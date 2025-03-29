@@ -9,8 +9,9 @@
  */
 import java.util.Stack;
 public class InfixToPostfixConverter {
-    
-    public static int predence (char ch){
+
+    // Menentukan prioritas operator
+    public static int precedence(char ch) {
         switch (ch) {
             case '+':
             case '-':
@@ -22,82 +23,91 @@ public class InfixToPostfixConverter {
                 return -1;
         }
     }
-    
-    public static String infixToPostfix(String expression){
+
+    // Mengonversi ekspresi infix ke postfix
+    public static String infixToPostfix(String expression) {
         StringBuilder result = new StringBuilder();
         Stack<Character> stack = new Stack<>();
-        for (int i = 0; i < expression.length(); ++i){
+
+        for (int i = 0; i < expression.length(); ++i) {
             char c = expression.charAt(i);
-            
-            if(c == ' '){
+
+            // Abaikan spasi
+            if (c == ' ') {
                 continue;
             }
-            
+
+            // Jika karakter adalah digit, tambahkan ke hasil
             if (Character.isDigit(c)) {
                 result.append(c);
-            } else if (c == '(') {
+            } 
+            // Jika karakter adalah tanda kurung buka
+            else if (c == '(') {
                 stack.push(c);
-            } else if (c == ')') {
-                while (!stack.isEmpty() && stack.peek() != '(')
+            } 
+            // Jika karakter adalah tanda kurung tutup
+            else if (c == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
                     result.append(stack.pop());
-                stack.pop();
-            } else {
-                while (!stack.isEmpty() && predence(c) <= predence(stack.peek())){
+                }
+                stack.pop(); // Menghapus '('
+            } 
+            // Jika karakter adalah operator
+            else {
+                while (!stack.isEmpty() && precedence(c) <= precedence(stack.peek())) {
                     result.append(stack.pop());
                 }
                 stack.push(c);
-                    
-            } 
-                
+            }
         }
-        
+
+        // Mengeluarkan semua operator yang tersisa di stack
         while (!stack.isEmpty()) {
-            if(stack.peek() == '(')
-                return "Invalid Expression";
-            result.append(stack.pop());   
+            result.append(stack.pop());
         }
+
         return result.toString();
     }
-    
-    public static int evaluatePostfix(String exp){
+
+    // Mengevaluasi ekspresi postfix
+    public static int evaluatePostfix(String exp) {
         Stack<Integer> stack = new Stack<>();
-        for (int i = 0; i < exp.length(); i++){
+        
+        for (int i = 0; i < exp.length(); i++) {
             char c = exp.charAt(i);
-            
-            if (Character.isDigit(c))
-                stack.push(c -'0');
-            
+
+            // Jika karakter adalah digit, push ke stack
+            if (Character.isDigit(c)) {
+                stack.push(c - '0');
+            } 
+            // Jika karakter adalah operator
             else {
                 int val1 = stack.pop();
                 int val2 = stack.pop();
                 switch (c) {
                     case '+':
-                        stack.push(val1 + val2);
+                        stack.push(val2 + val1);
                         break;
                     case '-':
-                        stack.push(val1 - val2);
+                        stack.push(val2 - val1);
                         break;
                     case '*':
-                        stack.push(val1 * val2);
+                        stack.push(val2 * val1);
                         break;
                     case '/':
-                        stack.push(val1 / val2);
+                        stack.push(val2 / val1);
                         break;
                 }
             }
-            
         }
-        
+        // Mengembalikan hasil evaluasi
         return stack.pop();
-        
     }
-    
-    
+
     public static void main(String[] args) {
-       String exp = "3 + 4 * 2 / (1 - 5)";
-       String postfix = infixToPostfix(exp);
-       System.out.println("Postfix Expression : " + postfix);
-       System.out.println("Evaluation Result : " + evaluatePostfix(postfix));
+        String exp = "3 + 4 * 2 / (1 - 5)";
+        String postfix = infixToPostfix(exp);
+        System.out.println("Postfix Expression: " + postfix);
+        System.out.println("Evaluation Result: " + evaluatePostfix(postfix));
     }
-    
 }
